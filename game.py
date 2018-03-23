@@ -11,7 +11,7 @@ screen = pygame.display.set_mode(SIZE)  # импортируем настрой�
 while True:  # игровой цикл
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # обработка события
-            sys.exit(0)  # завершение цикла
+            sys.exit(0)  # завершение циклаб
     screen.fill(WHITE)  # изменение цвета экрана
 
     pygame.display.flip()
