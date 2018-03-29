@@ -19,7 +19,11 @@ while True:  # игровой цикл
             sys.exit(0)  # завершение циклаб
 
     screen.fill(WHITE)  # изменение цвета экрана
+
+    player.update()
+
     screen.blit(player.image, player.rect)  # отображение игрока
+
     pygame.display.flip()
 
 
