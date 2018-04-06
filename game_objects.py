@@ -14,7 +14,7 @@ class Shoot(pygame.sprite.Sprite):
         self.rect.midbottom = position
 
 
-class Player(pygame.sprite.Sprite):  # класс игрока
+class Player(pygame.sprite.Sprite):  # класс игрок
 
     max_speed = 10
 
