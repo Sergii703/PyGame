@@ -10,16 +10,17 @@ pygame.init()  # inicjalizacja i uruchamianie jądra pygame
 pygame.display.set_caption("Space Invaders")  # nazwa ekranu głównego
 
 screen = pygame.display.set_mode(SIZE)  # zmienna która przyjmuje główny ekran, importujemy CONSTANCE
-clock = pygame.time.Clock()  # что бы быстро не перемещался
+clock = pygame.time.Clock()  # ogranicza częstotliwośc kadrów i żeby gracz nie szybko poruszał się w przestrzeni
 
-# Группв создается для того чтобы не лписывать каждый объкет по отдельности
+# metoda która pozwala lączyć obiekty/sprite w grupy dla tego żeby nie opisywać kazdy obiekt
 all_objects = pygame.sprite.Group()
 shoots = pygame.sprite.Group()
 
 # Obiekty gry
-player = Player(shoots, clock)  # przekazujemy obiekty do zmiennych
+player = Player(clock, shoots)
 background = Background()
 
+# musimy uważać na kolejnośc dodawania obiektów
 all_objects.add(background)
 all_objects.add(player)
 # all_objects.add(Shoot(player.rect.midtop))
@@ -35,9 +36,10 @@ while True:  # główny cykl gry
     all_objects.update()  # updejtijemy wszystkie obiekty/eventy cyklu gry
     shoots.update()
 
-    all_objects.draw(screen)  # что ьы не отображать по одному объекту сразу отображаем группу
+    all_objects.draw(screen)  # żeby nie pokazywać/opisywać kazdy obiekt, podajemy grupe
     shoots.draw(screen)
+
     pygame.display.flip()  # metoda która pokazuje końcowy wynik na główny ekran
-    clock.tick(50)  # скорость обновления экрана
+    clock.tick(50)  # szybkośc odswiezenia kadrów na sekunde
 
 
