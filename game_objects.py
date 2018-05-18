@@ -71,6 +71,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.current_shooting_cooldown -= self.clock.get_time()  # zmniejszamy cooldown do poprzedniej pozycji
 
+        # czyscimy pamięć, sprawdzamy gdzie znajduje się kula i jeżeli poza ekranem, to usuwamy ją z pamięci
         for shoot in list(self.shoots):
             if shoot.rect.bottom < 0:
                 self.shoots.remove(shoot)
@@ -95,19 +96,38 @@ class Background (pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
 
+# klas Meteorytów i jego obraz (Sprite)
 class Meteorite(pygame.sprite.Sprite):  # класс для метеоритов
-    cooldown = 250
+    cooldown = 350  # częstotliwosc meteorytów
     current_cooldown = 0
-    speed = 10
+    speed = 3
 
+    # konstruktor
     def __init__(self):
         super(Meteorite, self).__init__()
 
-        image_name = 'game/meteorit{}.jpg'.format(random.randint(1, 11))
-        self.image = pygame.image.load(image_name)
-        self.rect = self.image.get_rect()
+        image_name = 'game/meteor{}.png'.format(random.randint(1, 10))  # tworzymy liste obrazów meteorytów
+        self.image = pygame.image.load(image_name)  # ładujemy obrazy
+        self.rect = self.image.get_rect()  # rozmiar meteoryty
 
-        self.rect.midbottom = (random.randint(0, WIDTH), 0)
+        self.rect.midbottom = (random.randint(0, WIDTH), 0)  # pozycja pojawiania nowych meteorytów
 
     def update(self):
         self.rect.move_ip((0, self.speed))
+
+    @staticmethod  # żeby móc wykorzystywać statyczne zmienne cooldown i current_colldown
+    def process_meteorite(clock, meteorites):
+
+        # żeby meteoryty spadały w nieskończonność
+        if Meteorite.current_cooldown <= 0:
+            meteorites.add(Meteorite())
+            Meteorite.current_cooldown = Meteorite.cooldown
+        else:
+            Meteorite.current_cooldown -= clock.get_time()
+
+        # czyścimy pamięć, jeżeli meteoryt poza ekranem
+        for m in list(meteorites):
+            if (m.rect.right < 0 or
+                    m.rect.left > WIDTH or
+                    m.rect.top > HEIGHT):
+                meteorites.remove(m)

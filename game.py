@@ -3,7 +3,7 @@ import pygame
 import sys
 
 # importujemy dane z obiektów
-from game_objects import Player, Background, Shoot
+from game_objects import Player, Background, Shoot, Meteorite
 from settings import SIZE, WHITE
 
 pygame.init()  # inicjalizacja i uruchamianie jądra pygame
@@ -13,17 +13,19 @@ screen = pygame.display.set_mode(SIZE)  # zmienna która przyjmuje główny ekra
 clock = pygame.time.Clock()  # ogranicza częstotliwośc kadrów i żeby gracz nie szybko poruszał się w przestrzeni
 
 # metoda która pozwala lączyć obiekty/sprite w grupy dla tego żeby nie opisywać kazdy obiekt
+# GRUPY
 all_objects = pygame.sprite.Group()
 shoots = pygame.sprite.Group()
+meteors = pygame.sprite.Group()
 
-# Obiekty gry
+# OBIEKTY
 player = Player(clock, shoots)
 background = Background()
 
 # musimy uważać na kolejnośc dodawania obiektów
 all_objects.add(background)
 all_objects.add(player)
-# all_objects.add(Shoot(player.rect.midtop))
+
 
 while True:  # główny cykl gry
     for event in pygame.event.get():  # helper który pracuje nad wszystkimi eventami gry, metoda zwraca array wszystkich eventów
@@ -33,11 +35,22 @@ while True:  # główny cykl gry
     # ważna jest kolejnść pokazywania obrazów na ekranie
     screen.fill(WHITE)  # zmiana koloru ekranu na biały
 
-    all_objects.update()  # updejtijemy wszystkie obiekty/eventy cyklu gry
+    Meteorite.process_meteorite(clock, meteors)
+
+    all_objects.update()  # apdejtujemy wszystkie obiekty/eventy cyklu gry
     shoots.update()
+    meteors.update()
+
+    pygame.sprite.groupcollide(shoots, meteors, True, True)  # lapiemy dwie grupy i zwracamy wszystkie пересечения
+
+    # jezeli meteoryt i statek się spotkają to znikają oba
+    player_and_Meteors_collided = pygame.sprite.spritecollide(player, meteors, True)
+    if player_and_Meteors_collided:
+        all_objects.remove(player)
 
     all_objects.draw(screen)  # żeby nie pokazywać/opisywać kazdy obiekt, podajemy grupe
     shoots.draw(screen)
+    meteors.draw(screen)
 
     pygame.display.flip()  # metoda która pokazuje końcowy wynik na główny ekran
     clock.tick(50)  # szybkośc odswiezenia kadrów na sekunde
