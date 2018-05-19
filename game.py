@@ -1,9 +1,10 @@
 # importujemy biblioteki
 import pygame
+import pyganim
 import sys
 
 # importujemy dane z obiektów
-from game_objects import Player, Background, Shoot, Meteorite
+from game_objects import Player, Background, Meteorite
 from settings import SIZE, WHITE
 
 pygame.init()  # inicjalizacja i uruchamianie jądra pygame
@@ -12,11 +13,22 @@ pygame.display.set_caption("Space Invaders")  # nazwa ekranu głównego
 screen = pygame.display.set_mode(SIZE)  # zmienna która przyjmuje główny ekran, importujemy CONSTANCE
 clock = pygame.time.Clock()  # ogranicza częstotliwośc kadrów i żeby gracz nie szybko poruszał się w przestrzeni
 
+# aniwacja wybuchu meteoryty za pomocą pygaim
+explosion_animation = pyganim.PygAnimation([
+    ('game/blue_explosion/1_{}.png'.format(i), 50) for i in range(17)
+], loop=False)  # wybuch jednorazowy
+
+# dodanie dzwięków
+music = pygame.mixer.Sound('game/music/game.wav')
+music.play(-1)  # żeby dzięk nigdy sie nie kończył
+
 # metoda która pozwala lączyć obiekty/sprite w grupy dla tego żeby nie opisywać kazdy obiekt
 # GRUPY
 all_objects = pygame.sprite.Group()
 shoots = pygame.sprite.Group()
 meteors = pygame.sprite.Group()
+
+explosions = []  # lista wybuchów
 
 # OBIEKTY
 player = Player(clock, shoots)
@@ -41,7 +53,12 @@ while True:  # główny cykl gry
     shoots.update()
     meteors.update()
 
-    pygame.sprite.groupcollide(shoots, meteors, True, True)  # lapiemy dwie grupy i zwracamy wszystkie пересечения
+    shoots_meteors_collided = pygame.sprite.groupcollide(meteors, shoots, True, True)  # lapiemy dwie grupy i zwracamy wszystkie столкновкния
+
+    for collided in shoots_meteors_collided:  # dla kazdego obiektu które się spotkały
+        explosion = explosion_animation.getCopy()  # tworzymy kopie animacji wybuchu
+        explosion.play()  # odpalamy animacje wybuchu
+        explosions.append((explosion, (collided.rect.center)))  # i dodajemy do listy wszystkich wybuchów
 
     # jezeli meteoryt i statek się spotkają to znikają oba
     player_and_Meteors_collided = pygame.sprite.spritecollide(player, meteors, True)
@@ -51,6 +68,14 @@ while True:  # główny cykl gry
     all_objects.draw(screen)  # żeby nie pokazywać/opisywać kazdy obiekt, podajemy grupe
     shoots.draw(screen)
     meteors.draw(screen)
+
+    # bezposrednio sama animacja
+    for explosion, position in explosions.copy():  # bierzemy wybuch z listy, nie można usuwać z oryginalu elementów listy, dlatego używamy kopie
+        if explosion.isFinished():  # sprawdzamy czy wybuch już sie nie skończył
+            explosions.remove((explosion, position))  # i usuwamy z listy/pamięci animacje/wybuch
+        else:
+            x, y = position  # jeżeli wybuch się nie skończył, to bierzemy go pozycje
+            explosion.blit(screen, (x-128, y-128))  # pokazukjemy animacje na ekranie, odejmujemy polowe szerokości animacji
 
     pygame.display.flip()  # metoda która pokazuje końcowy wynik na główny ekran
     clock.tick(50)  # szybkośc odswiezenia kadrów na sekunde

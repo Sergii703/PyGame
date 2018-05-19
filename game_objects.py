@@ -13,7 +13,7 @@ class Shoot(pygame.sprite.Sprite):
     def __init__(self, position):
         super(Shoot, self).__init__()
 
-        self.image = pygame.image.load('../PyGame/game/shoot.png')
+        self.image = pygame.image.load('game/shoot.png')
         self.rect = self.image.get_rect()
 
         self.rect.midbottom = position  # pozycja w której musi się pojawiać kula
@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.clock = clock
         self.shoots = shoots
 
-        self.image = pygame.image.load('../PyGame/game/player.png')  # ladujemy obraz gracza
+        self.image = pygame.image.load('game/player.png')  # ladujemy obraz gracza
         self.rect = self.image.get_rect()  # rozmiar gracza, który równa się obrazu gracza
 
         # koordynaty gracza
@@ -45,6 +45,8 @@ class Player(pygame.sprite.Sprite):
         self.current_speed = 0  # szybkość na dany moment
 
         self.current_shooting_cooldown = 0
+
+        self.shoots.sound = pygame.mixer.Sound('game/sounds/plasma_bolt.wav')
 
     # pracujemy nad inputem od usera
     def update(self):
@@ -66,6 +68,7 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_SPACE] and self.current_shooting_cooldown <= 0:  # jaki przycisk odpowiada za strzelanie oraz ograniczenie strzelanie za jednym razem
+            self.shoots.sound.play()
             self.shoots.add(Shoot(self.rect.midtop))  # przekazujemy koordynaty gracza
             self.current_shooting_cooldown = self.shooting_cooldown  # częstotliwość strzelania
         else:
@@ -83,7 +86,7 @@ class Background (pygame.sprite.Sprite):
     def __init__(self):
         super(Background, self).__init__()
 
-        self.image = pygame.image.load('../PyGame/game/background.png')
+        self.image = pygame.image.load('game/background.png')
         self.rect = self.image.get_rect()  # rozmiar i miejsce fonu
         self.rect.bottom = HEIGHT
 
@@ -106,7 +109,7 @@ class Meteorite(pygame.sprite.Sprite):  # класс для метеоритов
     def __init__(self):
         super(Meteorite, self).__init__()
 
-        image_name = 'game/meteor{}.png'.format(random.randint(1, 10))  # tworzymy liste obrazów meteorytów
+        image_name = 'game/meteor{}.png'.format(random.randint(1, 7))  # tworzymy liste obrazów meteorytów
         self.image = pygame.image.load(image_name)  # ładujemy obrazy
         self.rect = self.image.get_rect()  # rozmiar meteoryty
 
