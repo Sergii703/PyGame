@@ -26,7 +26,7 @@ class Shoot(pygame.sprite.Sprite):
 # klas gracza i jego obraz (Sprite)
 class Player(pygame.sprite.Sprite):
     max_speed = 10  # szybkość ruchu gracza
-    shooting_cooldown = 180  # przerwy miedzy strzelaniem
+    shooting_cooldown = 180  # przerwy miedzy strzelanie
     # width = 127  # rozmiar
     # height = 300  # rozmiar
 
