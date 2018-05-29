@@ -2,7 +2,7 @@
 import random
 import pygame
 
-from settings import WIDTH, HEIGHT
+from settings import *
 
 
 # klas strzal i jego obraz (Sprite)
@@ -27,6 +27,8 @@ class Shoot(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     max_speed = 10  # szybkość ruchu gracza
     shooting_cooldown = 180  # przerwy miedzy strzelaniem
+    # width = 127  # rozmiar
+    # height = 300  # rozmiar
 
     def __init__(self, clock, shoots):  # konstruktor, "self" jest linkiem na sam obiekt
         super(Player, self).__init__()
@@ -38,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('game/player.png')  # ladujemy obraz gracza
         self.rect = self.image.get_rect()  # rozmiar gracza, który równa się obrazu gracza
 
-        # koordynaty gracza
+        # początkowe koordynaty gracza
         self.rect.centerx = WIDTH / 2  # na polowie ekranu
         self.rect.bottom = HEIGHT - 10  # od dolu głównego ekranu
 
@@ -51,10 +53,13 @@ class Player(pygame.sprite.Sprite):
     # pracujemy nad inputem od usera
     def update(self):
         keys = pygame.key.get_pressed()  # lapiemy przyciski które wciska user
-
-        if keys[pygame.K_LEFT]:  # przycisk w levo
+        if keys[pygame.K_LEFT] and self.rect.centerx > 1:  # przycisk w lewo
             self.current_speed = -self.max_speed  # szybkość
-        elif keys[pygame.K_RIGHT]:  # przycik w prawo
+            left = True
+            right = False
+        elif keys[pygame.K_RIGHT] and self.rect.centerx < 640 - size_x - 1:  # przycik w prawo
+            left = False
+            right = True
             self.current_speed = self.max_speed
         else:
             self.current_speed = 0  # jezeli nic nie było wciśnięte gracz stoi na miejscu

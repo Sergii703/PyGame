@@ -2,6 +2,9 @@
 import pygame
 import pyganim
 import sys
+from game_objects import *
+from settings import *
+from pygame.locals import *
 
 # importujemy dane z obiektów
 from game_objects import Player, Background, Meteorite
@@ -78,6 +81,6 @@ while True:  # główny cykl gry
             explosion.blit(screen, (x-128, y-128))  # pokazukjemy animacje na ekranie, odejmujemy polowe szerokości animacji
 
     pygame.display.flip()  # metoda która pokazuje końcowy wynik na główny ekran
-    clock.tick(50)  # szybkośc odswiezenia kadrów na sekunde
+    clock.tick(30)  # szybkośc odswiezenia kadrów na sekunde
 
 
